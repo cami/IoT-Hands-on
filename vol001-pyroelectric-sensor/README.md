@@ -1,10 +1,10 @@
 # Vol.001 焦電センサー
 
-## 1. 準備するもの
+## 準備するもの
 
 ### 必須
 
-* [Vol.000でセットアップしたRaspberry Pi](../vol000-raspberrypi-setup/README.md)（今回はセットアップ済みのRaspberry Piを用意）
+* [Vol.000 でセットアップした Raspberry Pi](../vol000-raspberrypi-setup/README.md)
 * [焦電センサ（SB412A）](http://akizukidenshi.com/catalog/g/gM-09002)
 * [PiCamera](https://www.amazon.co.jp/dp/B01D1D0DJ0)
 * LED
@@ -14,61 +14,82 @@
   * [10kΩ x 1個](http://akizukidenshi.com/catalog/g/gR-25103)
 * NPN型トランジスタ [2SC1815](http://akizukidenshi.com/catalog/g/gI-04268)
 * ジャンパワイヤ
-  * [オスーメス 3本](http://akizukidenshi.com/catalog/g/gC-08932)
+  * [オスーメス 適量](http://akizukidenshi.com/catalog/g/gC-08932)
   * [オスーオス 適量](http://akizukidenshi.com/catalog/g/gC-05371)
 
 
 ### 任意
 
-* モバイルバッテリ（離れた場所にRaspberry Piを置く場合）
+* モバイルバッテリ（離れた場所に Raspberry Pi を置く場合）
 
 
 ### PC環境
 
-* Slackアカウント
+* Slack アカウント
 
 
-## 2. 体験
+## 体験会
 
-キーボード、マウス、ディスプレイをRaspberryPiに接続せず、開発していきましょう！
+キーボード、マウス、ディスプレイを RaspberryPi に接続せず、開発していきましょう！
 
 
-### Exercise1「電子工作してみよう」
+### 練習1 電子工作してみよう
 
-#### 焦電センサを使う
+* Raspberry Pi を3.3Vの電源として電子回路を動作させます。
 
-「人を検知したらLEDが光る」という単純な回路を作成してみましょう。
+* Raspberry Pi に micro SDカード が挿してあること確認して、USB電源をつないでください。
 
-回路図
+
+#### 焦電センサの動作
+
+「人を検知したら LED が光る」という単純な回路を作成してみましょう。1本配線を間違えただけで、焦電センサやトランジスタが発熱して故障することがあります。故障防止のため、**電源（3.3V）と GND を接続する前** に配線を確認して、必要があればスタッフに相談してください。
+
+こちらの回路図や完成図を見ながら、作成していきます。
+
+**＊注意点** 電源（3.3V）と GND は、まず GND をつないでから電源（3.3V）をつなぐようにしてください。
+
+
+**【回路図】**
 
 ![回路図1](./docs/exercise1/schematic.png)
+
+
+**【完成図】**
+
+![完成図1](./docs/exercise1/product1.jpg)
+
+![完成図2](./docs/exercise1/product2.jpg)
 
 
 #### 仕組み
 
 * 焦電センサが人（赤外線）を検知する
-* 焦電センサのVoutがHighになる
-* トランジスタがonとなり、LEDが点灯する
+* 焦電センサの Vout が High になる
+* トランジスタが on となり、LED が点灯する
 
-焦電センサの[データシート](http://akizukidenshi.com/catalog/g/gM-09002)を確認してみましょう。
-「電源電圧(Vdd): 3.3V~12V、出力: 検出時(High)3V」とあります。
+焦電センサの[データシート](http://akizukidenshi.com/catalog/g/gM-09002)を確認してみましょう。「電源電圧（Vdd）: 3.3V～12V、出力: 検出時（High）3V」とあります。
 
-Raspberry Piのピンヘッダには 3.3V と 5V の電源出力ピンがあるため、3.3V の電源出力ピンを焦電センサの電源として使用することができます。
+Raspberry Pi のピンヘッダには 3.3V と 5V の電源出力ピンがあります。今回は、3.3V の電源出力ピンを焦電センサの電源として使用します。焦電センサからは3本のピンヘッダが出ています。真ん中は出力ピン Vout です。
 
-焦電センサからは3本のピンヘッダが出ています。真ん中は出力ピン Vout です。
-![写真](./docs/exercise1/pyroelectric-sensor.jpg)
+![焦電センサ](./docs/exercise1/pyroelectric-sensor.jpg)
 
-Raspberry Piの各GPIOの説明は以下を参照してください。
+NPN型トランジスタからは、足が3本出ています。それぞれに役割があり、正しく配線しないと動作しません。トランジスタから出ている3本の足は、それぞれベース、コレクタ、エミッタです。
+
+![トランジスタ](./docs/exercise1/transister-npn.png)
+
+Raspberry Pi の各 GPIO の説明は以下を参照してください。
 https://pinout.xyz
 
 
-GPIO（汎用入出力）のピン配置
+**【GPIO（汎用入出力）のピン配置】**
+
 ![GPIOのピン配置](./docs/exercise1/pinout.png)
 
+人を検知した場合、Vout が High となり 3V が出力されます。人を検知してから、一定時間後に Vout は Low となります。（High となる時間はセンサーに付いているボリュームで調整可能）
 
-人を検知した場合、Vout が High となり 3V が出力されます。人を検知してから、一定時間後（センサーに付いているボリュームで調整可能）
 
-センサー反応のタイミングチャート
+**【センサー反応のタイミングチャート】**
+
 ![timing-chart](./docs/exercise1/timing-chart.png)
 
 <!-- コメントアウト
@@ -80,29 +101,25 @@ GPIO =0=====X=1==================X=0===
 -->
 
 
-データシートにあるように、Voutは焦電センサの基板上の 20kΩ の抵抗を介して出力されているので、オームの法則より、約100μAの電流が出力されます。
+**【回路の仕組み】**
 
-この程度の電流ではLEDが明るく光らないため、NPN型トランジスタで増幅します。
+データシートにあるように、Vout は焦電センサの基板上の 20kΩ の抵抗を介して出力されているので、オームの法則より、約100μA の電流が出力されます。
 
-NPN型トランジスタのベース端子に焦電センサの出力電流が流れ込むことにより、トランジスタがonとなりコレクタ端子とエミッタ端子が導通して、LEDに電流が流れるようになります。
-
-トランジスタの増幅作用により、LEDにはベース端子に流れ込む電流の約100倍がコレクタ端子からエミッタ端子に流れます。
+この程度の電流では LED が明るく光らないため、NPN型トランジスタで増幅します。NPN型トランジスタのベース端子に焦電センサの出力電流が流れ込むことにより、トランジスタが on となりコレクタ端子とエミッタ端子が導通して、LED に電流が流れるようになります。トランジスタの増幅作用により、LED にはベース端子に流れ込む電流の約100倍がコレクタ端子からエミッタ端子に流れます。
 
 正しく動作すると、以下のように手や顔を近づけるとLEDが光ります。
 
-![Exercise1 product](./docs/exercise1/product.jpg)
+
+### 練習2 Raspberry Pi で焦電センサの出力状態を取得してみよう
+
+LED を光らせる代わりに、Raspberry Pi の GPIO を用いて焦電センサの出力状態（High、 Low）を読み取ってみましょう。
 
 
-### Exercise2「Raspberry Piで焦電センサからデータを取得してみよう」
+#### Raspberry Pi を起動する
 
-LEDを光らせる代わりに、Raspberry PiのGPIOを用いて焦電センサの出力状態（High, Low）を読み取ってみましょう。
+Raspberry Pi が起動したら、ターミナルソフトで Raspberry Pi にログインします。
 
-
-#### Raspberry Piを起動する
-
-* Raspberry Piにmicro SDカードが挿してあること確認して、USB電源をつないでください。
-
-* Raspberry Piが起動したら、TeraTermを起動してログインします。
+**【ログイン情報】**
 
 ```
 IPアドレス: Raspberry Piのケースに貼り付けてあるラベル
@@ -110,82 +127,102 @@ IPアドレス: Raspberry Piのケースに貼り付けてあるラベル
 パスフレーズ: raspberry
 ```
 
-![SSH](./docs/exercise2/ssh.png)
+WindowsでTeraTermを使う場合、TeraTerm を起動すると下記のような画面が現れるので、ログイン情報を見ながら IPアドレスを入力します。
 
+![TeraTerm_IP_address](./docs/exercise2/TeraTerm_IPaddress.png)
 
-ログインが完了したら、このような画面が表示されます。
+OK を押下すると、以下の画面が表示されるので、Raspberry Pi のデフォルトのユーザー名とパスフレーズを入力します。
 
+![TeraTerm_Auth](./docs/exercise2/TeraTerm.Auth.png)
+
+ログインに成功すると、以下の画面が表示されます。
 
 ![login_ssh](./docs/exercise2/login-ssh.png)
 
 
 #### 電子回路を作成する
 
-以下の実体配線図を見ながら、つないでみてください。
+以下の実体配線図を見ながら、つないでみてください。正しく配線しないと正しく動作しないので、注意深く配線してください。
+
+故障防止のため、**電源（3.3V）と GND を接続する前** に配線を確認して、必要があればスタッフに相談してください。
 
 ![回路図2](./docs/exercise2/breadboard.png)
 
 
-#### GPIOでデータを読み取る
+#### GPIO の状態を読み取る
 
-GPIOから焦電センサの出力状態（High, Low）を読み取るソースコードをGitHubから取得します。
+焦電センサの出力状態（High、Low）を GPIO で読み取るソースコードを GitHub から取得します。
 
-Raspberry Piで、以下のコマンドを実行しましょう。
+Raspberry Pi で、以下のコマンドを実行しましょう。
 
 ```
 $ git clone https://github.com/cami/IoT-Hands-on.git
 ```
 
-取得したディレクトリの中の、vol001-pyroelectric-sensorというディレクトリに移動します。
+取得したディレクトリの中の、vol001-pyroelectric-sensor というディレクトリに移動します。
 
-Raspberry Piで、以下のコマンドを実行しましょう。
+Raspberry Pi で、以下のコマンドを実行しましょう。
 
 ```
-$ cd /home/pi/IoT-Hands-on/vol001-pyroelectric-sensor
+$ cd ~/IoT-Hands-on/vol001-pyroelectric-sensor
 ```
 
-このディレクトリの中に、motion_sensor.py というPythonファイルがありますので、実行してください。
+このディレクトリの中に、`motion_sensor.py` という Python ファイルがありますので、実行してください。
+
+[ソースコード](./motion_sensor.py)
 
 ```
 $ python3 motion_sensor.py
 ```
 
-成功すれば、人を検知すれば1、検知しなければ0が表示されるはずです。
+成功すれば、人を検知すれば 1、検知しなければ 0 が表示されます。
 
 ![Exercise2 Python](./docs/exercise2/exec.png)
 
 
-### Exercise3「人を検知したら写真を撮影してSlackに送信しよう」
+### 練習3 人を検知したら写真を撮影して Slack に送信しよう
 
-最後に、人を検知したら写真を撮影することで、防犯カメラの役割を与えましょう。
-
-今回は通知と閲覧を容易にするために、Slackに写真を送信しています。
+最後に、人を検知したら写真を撮影することで、防犯カメラの役割を与えましょう。今回は通知と閲覧を容易にするために、Slack に写真を送信します。
 
 
-#### PiCameraをRaspberryPiに装着する
+#### PiCamera を RaspberryPi に接続する
 
-写真を撮影するために、PiCameraをRaspberry Piに接続しましょう。コネクタが壊れやすいので気を付けてください。
+写真を撮影するために、PiCamera を Raspberry Pi に接続しましょう。Raspberry Pi の終了処理を行い、電源外してから、PiCamera を接続します。
+
+Raspberry Pi で、以下のコマンドを実行しましょう。
+
+```
+sudo shutdown -h now
+```
+
+緑色の LED が点滅状態から消灯するのを待ってMicroUSBコネクタを抜いてください。
+
+![shutdown Raspberry Pi](./docs/exercise3/shutdown.jpg)
+
+
+次は、いよいよ Pi Camera を Raspberry Pi に接続します。写真の赤丸にある茶色のツメを上に引き上げてから、フラットケーブルを差し込み、ツメを押し下げます。フラットケーブルの向きは接点がHDMIコネクタ側です。コネクタは壊れやすいので気を付けてください。
 
 ![PiCamera on Raspberry Pi](./docs/exercise3/connect-picamera.jpg)
 
 
-#### Slack APIのTokenを設定する
+#### Slack API の Token を設定する
 
-撮影した写真をSlackに投稿するために、Slack APIのTokenを設定します。Tokenは先ほど招待したSlackのワークスペースの `#general` チャンネルに記載してあります。
+撮影した写真を Slack に投稿するために、Slack API の Token を設定します。スタッフが Token を配布します。
 
-ご自分のSlackを使いたい場合は以下のページを参考にTokenを発行してください。Permission Scopeには`files.upload` を追加してください。https://qiita.com/ykhirao/items/3b19ee6a1458cfb4ba21
+ご自分のSlackを使いたい場合は以下のページを参考に Token を発行してください。Permission Scope には`files.upload` を追加してください。
 
+https://qiita.com/ykhirao/items/3b19ee6a1458cfb4ba21
 
-Raspberry Piで以下のコマンドを実行して`motion_detected_send_slack.py` ファイルを編集します。
+Raspberry Pi で以下のコマンドを実行して、Pythonファイルを編集します。
 
 ```
-$ nano /home/pi/IoT-Hands-on/vol001-pyroelectric-sensor/motion_detected_send_slack.py
+$ nano ~/IoT-Hands-on/vol001-pyroelectric-sensor/motion_detected_send_slack.py
 ```
 
-22行目の以下の行を、Slack の `#general` チャンネルに投稿したTokenに置き換えます。
+18行目の以下の行で、`xoxp-`を配布したTokenに置き換えます。
 
 ```python
-TOKEN = 'xoxp-'
+'token': "xoxp-",
 ```
 
 
@@ -197,20 +234,33 @@ TOKEN = 'xoxp-'
 
 ブレッドボードへの配線は下記の通りになります。
 
+故障防止のため、**電源（3.3V）と GND を接続する前** に配線を確認して、必要があればスタッフに相談してください。
+
 ![回路図3_ブレッドボード](./docs/exercise3/breadboard.png)
 
 
-#### 実行する
+#### 防犯カメラを起動する
 
-Raspberry Piで、以下のコマンドを実行しましょう。人を検知したらSlackに写真が送られるはずです。
+vol001-pyroelectric-sensor というディレクトリに移動します。Raspberry Pi で、以下のコマンドを実行しましょう。
 
-こちらのチャンネル [# security-camera](https://camico-kousaku-01.slack.com/messages/CDSC8F066/) で確認してみましょう！
+```
+$ cd ~/IoT-Hands-on/vol001-pyroelectric-sensor
+```
 
+このディレクトリの中に、`motion_detected_send_slack.py` という Python ファイルがありますので、実行してください。
+
+[ソースコード](./motion_detected_send_slack.py)
 
 ```
 $ python3 motion_detected_send_slack.py
 ```
 
-Slackへの通知が完了したら、Slack APIのAPIリファレンスを参照しながら、Slackへのアップロードをカスタマイズしてみましょう。
+人を検知したら Slack に写真が送られるはずです。
+
+こちらのチャンネル [# security-camera](https://camico-kousaku-01.slack.com/messages/CDSC8F066/) で確認してみましょう！
+
+
+
+Slack への通知が完了したら、Slack API の API リファレンスを参照しながら、Slack へのアップロードをカスタマイズしてみましょう。
 
 [Slack API files.upload](https://api.slack.com/methods/files.upload)
