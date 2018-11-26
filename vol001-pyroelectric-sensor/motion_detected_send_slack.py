@@ -1,63 +1,60 @@
-#! /usr/bin/python
+#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 
-# python3 motion_detected_send_slack.py
-
-import os
-import glob
+from pathlib import Path
 from time import sleep
 import datetime
 
-# ラズパイのGPIOを制御するためのmoduleをimport
 import RPi.GPIO as GPIO
-# PiCameraを操作するためのmoduleをimport
 import picamera
-# HTTP通信のためのmoduleをimport
 import requests
 
 GPIO.setmode(GPIO.BCM)
 GPIO.setup(18, GPIO.IN)
 
-# 撮影した写真のアップロード先の情報
-TOKEN = 'xoxp-'
-CHANNEL = 'security-camera'
-URL = 'https://slack.com/api/files.upload'
-
-sleep(2)
+# Slackの設定情報
+SLACK_URL = 'https://slack.com/api/files.upload'
+SLACK_CONFIG = {
+    'token': "xoxp-",
+    'channels': "security-camera",
+    'filename': "https://slack.com/api/files.upload",
+    'initial_comment': "Upload Suspicious Person"
+}
 
 try:
-	while True:
-		motion = GPIO.input(18)
-		print(motion)
+    with picamera.PiCamera() as camera:
+        camera.resolution = (1024, 768)
+        camera.start_preview()
 
-		# 人を検知した場合に実行
-		if motion == 1:
-			print("人を検知。写真を撮影しました。")
-			now_time = datetime.datetime.now()
-			print(now_time)
-			image_name = 'motion.captured_{0:%Y%m%d-%H%M%S}.png'.format(now_time)
-			print(image_name)
+        while True:
+            detect = GPIO.input(18)
+            print(detect)
 
-			# PiCameraで撮影を行う
-			with picamera.PiCamera() as camera:
-				camera.resolution = (1024, 768)
-				camera.capture(image_name)
-				files = {'file': open(image_name, 'rb')}
-				payload = {
-					'token': TOKEN,
-					'channels': CHANNEL,
-					'filename': image_name,
-					'initial_comment': "Upload Suspicious Person"
-				}
-				# 撮影した写真をslackに送信
-				requests.post(URL, params=payload, files=files)
+            # 人を検知した
+            if detect == 1:
+                print("人を検知したため、写真を撮影しました。")
 
-				# pngファイルを削除
-				os.remove(image_name)
+                now_time = datetime.datetime.now()
+                print(now_time)
 
-		sleep(1)
+                image_path = Path(f"motion.captured_{now_time:%Y%m%d-%H%M%S}.png")
+                print(image_path)
+
+                # PiCameraで撮影を行う
+                camera.capture(image_path)
+
+                # 撮影した写真をSlackに送信する
+                with image_path.open('rb') as f:
+                    requests.post(SLACK_URL, params=SLACK_CONFIG, files={'file': f})
+
+                # pngファイルを削除
+                image_path.unlink()
+
+            sleep(1)
+
 
 except KeyboardInterrupt:
-	print("\nCtrl + C")
+    pass
 
-GPIO.cleanup()
+finally:
+    GPIO.cleanup()
