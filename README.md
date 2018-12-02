@@ -21,10 +21,10 @@ Raspberry Piとセンサなどを用いて、基本的な電子部品の使い�
 | Vol | 内容 |
 |:----|:----|
 | [vol000][vol000] | Raspberry Piのセットアップ |
-| [vol001][vol001] | 焦電センサを使った人感センサーの電子回路に始まり、Raspberry Piと連携させ、人感センサをトリガーとして写真を撮影して、写真と共にメッセージをSlackに投稿する |
-| [vol002][vol002] | Raspberry PiとPiCameraを組み合わせて監視カメラを作る |
+| [vol001][vol001] | 焦電センサを使った人感センサーの電子回路を作成する。Raspberry Piと連携させ、人感センサをトリガーとして写真を撮影して、写真と共にメッセージをSlackに投稿する。 |
+| [vol002][vol002] | OpenCVを使用して、人物判定を行う。 |
 
 [vol000]: ./vol000-raspberrypi-setup/README.md
 [vol001]: ./vol001-pyroelectric-sensor/README.md
-[vol002]: ./vol002-surveillance-camera/README.md
+[vol002]: ./vol002-opencv/README.md
 

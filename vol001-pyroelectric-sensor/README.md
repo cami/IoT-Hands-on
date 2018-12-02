@@ -469,4 +469,4 @@ $ python3 motion_trigger_notification.py
 
 余力のある方は、[vol002][vol002] に進んでみましょう！
 
-[vol002]: ../vol002-surveillance-camera/README.md
+[vol002]: ../vol002-opencv/README.md
