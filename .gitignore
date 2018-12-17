@@ -214,4 +214,8 @@ pip-selfcheck.json
 
 # End of https://www.gitignore.io/api/python,pycharm
 
-*.yml
+# Ignore slack-config
+config.yml
+
+# Ignore .idea
+.idea/
