@@ -1,0 +1,6 @@
+# Slackの設定情報
+
+url: 'https://slack.com/api/files.upload'
+token: 'xoxp-'
+channels: 'security-camera'
+initial_comment: 'Detected moving objects'
