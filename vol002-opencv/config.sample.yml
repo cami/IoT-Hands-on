@@ -1,0 +1,6 @@
+# Slack
+slack_token: user slack token
+slack_channel: user slack channel name
+
+# OpenCV
+opencv_classifier_name: haarcascades xml file
